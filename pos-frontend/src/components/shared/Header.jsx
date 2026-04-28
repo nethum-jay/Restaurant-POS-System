@@ -32,7 +32,7 @@ const Header = () => {
                 <div className="flex items-center gap-3 cursor-pointer">
                     <FaUserCircle className="text-[#f5f5f5] text-4xl" />
                     <div className="flex flex-col items-start">
-                        <h1 className="text-md text-[#f5f5f5] font-semibold tracking-wider">Nethum Jayanuka</h1>
+                        <h1 className="text-md text-[#f5f5f5] font-semibold tracking-wider">Jayanuka</h1>
                         <p className="text-sm text-[#ababad] font-medium">Admin</p>
                     </div>
                 </div>
