@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaNotesMedical } from 'react-icons/fa';
+import { FaNotesMedical } from 'react-icons/fa6';
 import { RiDeleteBin2Fill } from "react-icons/ri";
 
 const CartInfo = () => {
