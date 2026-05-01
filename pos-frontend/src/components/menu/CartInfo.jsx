@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { RiDeleteBin2Fill } from "react-icons/ri";
 import { FaNotesMedical } from 'react-icons/fa6';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,11 +6,20 @@ import { removeItem } from '../../redux/slices/cartSlice';
 
 const CartInfo = () => {
   const cartData = useSelector(state => state.cart);
-  const scrollRef = useRef();
-  const dipatch = useDispatch();
+  const scrolLRef = useRef();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (scrolLRef.current) {
+      scrolLRef.current.scrollTo({
+        top: scrolLRef.current.scrollHeight,
+        behavior: "smooth"
+      })
+    }
+  },[cartData]);
 
   const handleRemove = (itemID) => {
-    dipatch(removeItem(itemID));
+    dispatch(removeItem(itemID));
   }
 
   return (
@@ -18,7 +27,7 @@ const CartInfo = () => {
         <h1 className="text-lg text-[#e4e4e4] font-semibold tracking-wide">
             Order Details
         </h1>
-        <div className="mt-4 overflow-y-scroll scrollbar-hide h-[380px]">
+        <div className="mt-4 overflow-y-scroll scrollbar-hide h-[380px]" ref={scrolLRef}>
           {cartData.length === 0 ? (
             <p className="text-[#ababab] text-sm flex justify-center items-center h-[380px]">Your cart is empty. Start adding items!</p>
           ) : cartData.map((item) => {
