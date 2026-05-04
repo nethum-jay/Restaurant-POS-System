@@ -1,0 +1,22 @@
+[+] Cretae Project Directory
+[+] Create a NPM Project and install all dependencies
+    - dependencies
+        - express monh=goose dotenv
+    - Dev dependencies
+        - nodemon
+[+] Create express sever - app.js
+[+] Folder Structure
+[-] Databasce Setup
+[-] Error Handling Setup (Global Error Handler)
+[-] API Creation
+    - Auth API's
+        - Register
+        - Login
+    - Order API's 
+        - GET, POST Order
+    - Table API's 
+        GET, POST Order
+- Category + Items API's (Optional)
+- Payment Related API's (Razorpay)
+
+Deploy on AWS or DigitalOcean
