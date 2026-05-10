@@ -11,12 +11,11 @@ connectDB();
 
 // Root Endpoint
 app.get("/", (req,res) => {
-
-    const err = createHttpError(404, "Something went wrong!");
-    throw err;
-    
     res.json({message : "Hello from POS Server!"});
 }) 
+
+// Other Endpoints
+app.use("/api/user", require("./routes/userRoute"));
 
 // Global Error Handler
 app.use(globalErrorHandler);

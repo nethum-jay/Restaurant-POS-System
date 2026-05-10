@@ -7,9 +7,12 @@
 [+] Create express sever - app.js
 [+] Folder Structure
 [-] Databasce Setup
-[-] Error Handling Setup (Global Error Handler)
+[+] Error Handling Setup (Global Error Handler)
 [-] API Creation
     - Auth API's
+        -Create User Model
+        -Create User Route
+        -Create Controller
         - Register
         - Login
     - Order API's 
