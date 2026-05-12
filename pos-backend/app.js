@@ -9,6 +9,9 @@ const app = express();
 const PORT = config.port;
 connectDB();
 
+// Middleware
+app.use(express.json());// parse incoming request in json format
+
 // Root Endpoint
 app.get("/", (req,res) => {
     res.json({message : "Hello from POS Server!"});
