@@ -1,4 +1,6 @@
-import React, { useState }from 'react'
+import React, { useState }from 'react';
+import { useMutation } from "@tanstack/react-query";
+import { login } from "../../https/index";
 
 const Login = () => {
 
@@ -14,8 +16,19 @@ const Login = () => {
     
         const handleSubmit = (e) => {
             e.preventDefault();
-            console.log(formData);
+            loginMutation.mutate(formData);
         }
+
+        const loginMutation = useMutation({
+            mutationFn: (reqData) => login(reqData),
+            onSuccess: (res) => {
+                const { data } = res;
+                console.log(data);
+            },
+            onError: (error) => {
+                console.log(error);
+            }
+        })
 
   return (
     <div>
