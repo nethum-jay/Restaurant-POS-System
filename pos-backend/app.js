@@ -15,7 +15,7 @@ app.use(cors({
     credentials: true,
     origin: ['http://localhost:5173']
 }))
-app.use(express.json());// parse incoming request in json format
+app.use(express.json()); // parse incoming request in json format
 app.use(cookieParser())
 
 
