@@ -3,9 +3,11 @@ import { useMutation } from "@tanstack/react-query"
 import { login } from "../../https/index"
 import { enqueueSnackbar } from "notistack";
 import { useDispatch } from "react-redux";
+import { setUser } from "../../redux/slices/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-
+        const navigate = useNavigate();
         const dispatch = useDispatch();
         const[formData, setFormData] = useState({
             email: "",
@@ -28,7 +30,8 @@ const Login = () => {
                 const { data } = res;
                 console.log(data);
                 const { _id, name, email, phone, role } = data.data;
-                dispatch ()
+                dispatch (setUser({_id, name, email, phone, role }));
+                navigate("/")
             },
             onError: (error) => {
                 const { response } = error;
