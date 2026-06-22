@@ -39,7 +39,7 @@ const Auth = () => {
         </h2>
 
         {/* Component */}
-        {isRegister ? <Register /> : <Login />}
+        {isRegister ? <Register setIsRegister={setIsRegister} /> : <Login />}
 
 
         <div className="flex justify-center mt-6">

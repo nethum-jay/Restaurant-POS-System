@@ -10,7 +10,7 @@ const register = async (req, res, next) => {
         const { name, phone, email, password, role } = req.body;
         
         if (!name || !phone || !email || !password || !role) {
-            const error = createHttpError(400, "All fiedlds are required!");
+            const error = createHttpError(400, "All fields are required!");
             return next(error);
         }    
       
@@ -25,7 +25,7 @@ const register = async (req, res, next) => {
         const newUser = User(user);
         await newUser.save();
 
-        res.status(201).json({success: true, massage: "New user creted!" , date: newUser});
+        res.status(201).json({success: true, message: "New user creted!" , data: newUser});
         
 
     } catch (error) {
@@ -93,7 +93,7 @@ const getUserData = async (req, res, next) => {
 const logout = async (req, res, next) => {
     try{
 
-        res.clearCookis("accessToken");
+        res.clearCookie("accessToken");
         res.status(200).json({success: true, message: "User logout successfully!"});
 
     } catch (error) {
