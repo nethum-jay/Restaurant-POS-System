@@ -31,7 +31,7 @@ const Login = () => {
                 console.log(data);
                 const { _id, name, email, phone, role } = data.data;
                 dispatch (setUser({_id, name, email, phone, role }));
-                navigate("/")
+                navigate("/");
             },
             onError: (error) => {
                 const { response } = error;
