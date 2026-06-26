@@ -26,7 +26,7 @@ const Dashboard = () => {
                   {label} {icon}
                 </button>
               );
-            })};
+            })} 
         </div>
 
          <div className="flex items-center gap-3">
@@ -39,11 +39,13 @@ const Dashboard = () => {
                   {tab}
                 </button>
               );
-            })};
+            })} 
         </div>
       </div>
-          <Metrics />
-          <RecentOrders />
+          
+          {activeTab === "Metrics" && <Metrics />}
+          {activeTab === "Orders" && <RecentOrders />}
+
     </div>
   );
 };
