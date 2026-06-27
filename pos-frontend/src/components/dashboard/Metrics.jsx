@@ -1,5 +1,5 @@
 import React from "react";
-import { metricsData } from "../../constants"
+import { itemsData, metricsData } from "../../constants";
 
 const Metrics = () => {
   return (
@@ -10,7 +10,7 @@ const Metrics = () => {
             Overall Performance 
           </h2>
           <p className="text-sm text-[#ababab]">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. 
+            Lorem, ipsum Rs. sit amet consectetur adipisicing elit. 
             Distinctio, obcaecati?
           </p>
         </div>
@@ -66,6 +66,40 @@ const Metrics = () => {
             </div>
           );
         })}
+      </div>
+      
+        <div className="flex justify-between mt-12 items-center">
+        <div>
+          <h2 className="font-semibold text-[#f5f5f5] text-xl">
+            Item Details
+          </h2>
+          <p className="text-sm text-[#ababab]">
+            Lorem, ipsum Rs. sit amet consectetur adipisicing elit. 
+            Distinctio, obcaecati?
+          </p>
+        </div>
+
+        <div className="mt-6 grid grid-cols-4 gap-4">
+
+          {
+            itemsData.map((item, index) => {
+              return(
+                <div key={index} className="shadow-sm rounded-lg p-4" style={{ backgroundColor: item.color }}>
+                  <div className="flex justify-between items-center">
+                    <p className="font-medium text-xs text-[#f5f5f5]">{item.title}</p>
+                    <div className="flex items-center gap-1">
+                      <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="4" fill="none">
+                        <path d="M5 15l7-7 7 7" />
+                      </svg>
+                      <p className="font-medium text-xs text-[#f5f5f5]">{item.percentage}</p>
+                    </div>
+                  </div>
+                  <p className="mt-1 font-semibold text-2xl text-[#f5f5f5]">{item.value}</p>
+                </div>
+              )
+            })
+          }
+        </div>
       </div>
     </div>
   );

@@ -48,6 +48,14 @@ function Layout() {
               </ProtectedRoutes>
             } 
           />
+                    <Route 
+            path="/menu" 
+            element={
+              <ProtectedRoutes>
+                <Menu />
+              </ProtectedRoutes>
+            } 
+          />
           <Route 
             path="/dashboard" 
             element={
