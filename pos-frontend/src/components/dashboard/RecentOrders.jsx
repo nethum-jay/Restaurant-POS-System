@@ -1,8 +1,12 @@
 import React from "react"
+import { orders } from "../../constants";
+import { GrUpdate } from "react-icons/gr";
 
 const RecentOrders = () => {
+  const handleStatusChange = () => {};
+
   return (
-    <div className="contaner mx-auto bg-[#262626] p-4 rounded-lg">
+    <div className="container mx-auto bg-[#262626] p-4 rounded-lg">
       <h2 className="text-[#f5f5f5] text-xl font-semibold mb-4">
         Recent Orders
       </h2>
@@ -27,11 +31,11 @@ const RecentOrders = () => {
                 className="border-b border-x-gray-600 hover:bg-[#333]"
               >
                 <td className="p-4">#{order.id}</td>
-                <td className="p-4">#{order.customer}</td>
+                <td className="p-4">{order.customer}</td>
                 <td className="p-4">
                   <select
                     className={`bg-[#1a1a1a] text-[#f5f5f5] border border-gray-500 p-2 rounded-lg focus:outline-none ${
-                      order.select === "Ready"
+                      order.status === "Ready"
                         ? "text-green-500"
                         : "text-yellow-500"
                     }`}
@@ -61,7 +65,8 @@ const RecentOrders = () => {
         </table>
       </div>
     </div>
-  )
-}
+
+  );
+};
 
 export default RecentOrders;
