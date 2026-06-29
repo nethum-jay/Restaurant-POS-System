@@ -35,7 +35,7 @@ const RecentOrders = () => {
                 <td className="p-4">
                   <select
                     className={`bg-[#1a1a1a] text-[#f5f5f5] border border-gray-500 p-2 rounded-lg focus:outline-none ${
-                      order.status === "Ready"
+                      order.s === "Ready"
                         ? "text-green-500"
                         : "text-yellow-500"
                     }`}
@@ -55,7 +55,7 @@ const RecentOrders = () => {
                 <td className="p-4">Table - {order.items}</td>
                 <td className="p-4">Rs.{order.total.toFixed(2)}</td>
                 <td className="p-4 text-center">
-                  <button className="text-blue-400 hover:text-blue-500 transitio">
+                  <button className="text-blue-400 hover:text-blue-500 transition">
                     <GrUpdate size={20} />
                   </button>
                 </td>
