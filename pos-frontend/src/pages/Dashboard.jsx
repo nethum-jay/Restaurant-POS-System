@@ -3,6 +3,7 @@ import { MdTableBar, MdCategory } from "react-icons/md";
 import { BiSolidDish } from "react-icons/bi";
 import Metrics from "../components/dashboard/Metrics";
 import RecentOrders from "../components/dashboard/RecentOrders";
+import Modal from "../components/dashboard/Modal";
 
 const buttons = [
   { label: "Add Table", icon: <MdTableBar />, action: "table" },
@@ -13,7 +14,7 @@ const buttons = [
 const tabs = ["Metrics", "Orders", "Payment"];
 
 const Dashboard = () => {
-
+    const [isModalOpen, setIsModalOpen ] = useState(false);
     const [activeTab, setActiveTab] = useState("Metrics");
 
   return (
@@ -22,7 +23,7 @@ const Dashboard = () => {
         <div className="flex items-center gap-3">
           {buttons.map(({ label, icon, action}) => {
               return (
-                <button className="bg-[#1a1a1a] hover:bg-[#262626] px-8 py-3 rounded-lg text-[#f5f5f5] font-semibold text-md flex items-center gap-2">
+                <button onClick={() => handleOpenModal(action)} className="bg-[#1a1a1a] hover:bg-[#262626] px-8 py-3 rounded-lg text-[#f5f5f5] font-semibold text-md flex items-center gap-2">
                   {label} {icon}
                 </button>
               );
@@ -32,8 +33,13 @@ const Dashboard = () => {
          <div className="flex items-center gap-3">
           {tabs.map((tab) => {
               return (
-                <button className={`
-                  px-8 py-3 rounded-lg text-[#f5f5f5] font-semibold text-md flex items-center gap-2 ${activeTab === tab ? "bg-[#262626]" : "bg-[#1a1a1a] hover:bg-[#262626]"}`} 
+                <button 
+                className={`
+                px-8 py-3 rounded-lg text-[#f5f5f5] font-semibold text-md flex items-center gap-2 ${
+                  activeTab === tab 
+                  ? "bg-[#262626]" 
+                  : "bg-[#1a1a1a] hover:bg-[#262626]"
+                }`} 
                 onClick={() => setActiveTab(tab)}
                 >
                   {tab}
@@ -46,8 +52,9 @@ const Dashboard = () => {
           {activeTab === "Metrics" && <Metrics />}
           {activeTab === "Orders" && <RecentOrders />}
 
+          {isModalOpen && <Modal />}
     </div>
   );
 };
 
-export default Dashboard
+export default Dashboard;
