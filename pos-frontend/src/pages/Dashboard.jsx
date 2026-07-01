@@ -14,8 +14,12 @@ const buttons = [
 const tabs = ["Metrics", "Orders", "Payment"];
 
 const Dashboard = () => {
-    const [isModalOpen, setIsModalOpen ] = useState(false);
+    const [isTableModalOpen, setIsTableModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("Metrics");
+
+    const handleOpenModal = (action) => {
+      if(action === "table") setIsTableModalOpen(true);
+    }
 
   return (
     <div className="bg-[#1f1f1f] h-[calc(100vh-5rem)]">
@@ -52,7 +56,7 @@ const Dashboard = () => {
           {activeTab === "Metrics" && <Metrics />}
           {activeTab === "Orders" && <RecentOrders />}
 
-          {isModalOpen && <Modal />}
+          {isTableModalOpen && <Modal />}
     </div>
   );
 };
