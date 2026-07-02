@@ -1,8 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
 
 const Modal = ({ setIsTableModalOpen }) => {
+
+      const [ tableData, setTableData ] = useState({
+        tableNo: "",
+        seats: ""
+      });
+
+      const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setTableData((prev) => ({...prev, [name]: value}))
+      }
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log(tableData);
+      }
+
     const handleCloseModal = () => {
       setIsTableModalOpen(false);
     };
@@ -30,7 +46,7 @@ const Modal = ({ setIsTableModalOpen }) => {
 
         {/* Modal Body */}
         
-        <form className="space-y-4 mt-10">
+        <form onSubmit={handleSubmit} className="space-y-4 mt-10">
           <div>
             <label className="block text-[#ababab] mb-2 mt-3 text-sm font-medium">
               Table Number
@@ -39,6 +55,8 @@ const Modal = ({ setIsTableModalOpen }) => {
                 <input 
                   type="number"
                   name="tableNo"
+                  value={tableData.tableNo}
+                  onChange={handleInputChange}
                   className="bg-transparent flex-1 text-white focus:outline-none"
                   required
                 />
@@ -52,6 +70,8 @@ const Modal = ({ setIsTableModalOpen }) => {
                 <input 
                   type="number"
                   name="seats"
+                  value={tableData.seats}
+                  onChange={handleInputChange}
                   className="bg-transparent flex-1 text-white focus:outline-none"
                   required
                 />
