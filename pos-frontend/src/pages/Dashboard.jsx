@@ -56,7 +56,7 @@ const Dashboard = () => {
           {activeTab === "Metrics" && <Metrics />}
           {activeTab === "Orders" && <RecentOrders />}
 
-          {isTableModalOpen && <Modal />}
+          {isTableModalOpen && <Modal setIsTableModalOpen={setIsTableModalOpen} />}
     </div>
   );
 };
