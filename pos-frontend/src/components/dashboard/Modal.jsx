@@ -12,16 +12,27 @@ const Modal = ({ setIsTableModalOpen }) => {
       const handleInputChange = (e) => {
         const { name, value } = e.target;
         setTableData((prev) => ({...prev, [name]: value}))
-      }
+      };
 
       const handleSubmit = (e) => {
         e.preventDefault();
         console.log(tableData);
-      }
+      };
 
     const handleCloseModal = () => {
       setIsTableModalOpen(false);
     };
+
+    const tableMutation = useMutation({
+      mutationFn: (reqData) => addTable(reqData),
+      onSuccess: (data) => {
+        setIsTableModalOpen(false);
+        console.log(data);
+      },
+      onError: (error) => {
+        console.log(error);
+      }
+    })
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

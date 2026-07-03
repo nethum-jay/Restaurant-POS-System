@@ -3,25 +3,27 @@ const createHttpError = require("http-errors");
 const mongoose = require("mongoose");
 
 const addTable = async (req, res, next) => {
-        try{
-            const { tableNo } = req.body;
+    try{
+        const { tableNo, seats} = req.body;
 
-            if(!tableNo){
-                const error = createHttpError(400, "Please provied table No!");
-                return error;
-            }
+        if(!tableNo){
+            const error = createHttpError(400, "Please provied table No!");
+            return error;
+        }
 
-            const isTablePresent = await Table.findOne({tableNo});
+        const isTablePresent = await Table.findOne({tableNo});
 
-            if(isTablePresent){
-                const error = createHttpError(400, "Table alredy exists!");
-                return error;
-            }
+        if(isTablePresent){
+            const error = createHttpError(400, "Table alredy exists!");
+            return error;
+        }
 
-            const newTable = new Table({tableNo});
-            await newTable.save();
+        const newTable = new Table({ tableNo, seats });
+        await newTable.save();
 
-            res.status(201).json({success: true, message: "Table added!", data: newTable});
+        res.
+            status(201).
+            json({success: true, message: "Table added!", data: newTable});
 
     }catch (error) {
         next(error);
