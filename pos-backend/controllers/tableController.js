@@ -5,31 +5,26 @@ const mongoose = require("mongoose");
 const addTable = async (req, res, next) => {
     try{
         const { tableNo, seats} = req.body;
-
         if(!tableNo){
             const error = createHttpError(400, "Please provied table No!");
-            return error;
+            return next(error);
         }
-
         const isTablePresent = await Table.findOne({tableNo});
 
         if(isTablePresent){
             const error = createHttpError(400, "Table alredy exists!");
-            return error;
+            return next(error);
         }
 
         const newTable = new Table({ tableNo, seats });
         await newTable.save();
-
         res.
             status(201).
             json({success: true, message: "Table added!", data: newTable});
-
     }catch (error) {
         next(error);
     }
-
-}
+};
 
 const getTables = async (req, res, next) => {
     try {

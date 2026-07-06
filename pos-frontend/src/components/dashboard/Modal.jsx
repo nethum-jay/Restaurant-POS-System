@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
+import { addTable } from "../../https";
+import { useMutation } from "@tanstack/react-query";
+import { enqueueSnackbar } from "notistack";
 
 const Modal = ({ setIsTableModalOpen }) => {
-
       const [ tableData, setTableData ] = useState({
         tableNo: "",
         seats: ""
@@ -17,6 +19,7 @@ const Modal = ({ setIsTableModalOpen }) => {
       const handleSubmit = (e) => {
         e.preventDefault();
         console.log(tableData);
+        tableMutation.mutate(tableData);
       };
 
     const handleCloseModal = () => {
@@ -25,11 +28,14 @@ const Modal = ({ setIsTableModalOpen }) => {
 
     const tableMutation = useMutation({
       mutationFn: (reqData) => addTable(reqData),
-      onSuccess: (data) => {
+      onSuccess: (res) => {
         setIsTableModalOpen(false);
-        console.log(data);
+        const { data } = res;
+        enqueueSnackbar(data.message, { variant: "success" });
       },
       onError: (error) => {
+        const { data } = error.response;
+        enqueueSnackbar(data.message, { variant: "error" });
         console.log(error);
       }
     })
