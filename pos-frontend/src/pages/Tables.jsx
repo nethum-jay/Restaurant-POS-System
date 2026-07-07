@@ -1,12 +1,27 @@
-import React, { useState } from 'react'
-import BottomNav from '../components/shared/BottomNav'
-import BackButton from '../components/shared/BackButton'
-import TableCard from '../components/tables/TableCard'
-import { tables } from '../constants';
+import React, { useState } from "react"
+import BottomNav from "../components/shared/BottomNav"
+import BackButton from "../components/shared/BackButton"
+import TableCard from "../components/tables/TableCard"
+import { tables } from "../constants";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { getTables } from "../https";
 
 const Tables = () => {
+    const [status, setStatus] = useState("all");
 
-    const [status, setStatus] = useState('all');
+    const { data:resData} = useQuery({
+      queryKey: ["tables"],
+      queryFn: async () => {
+        return await getTables();
+      },
+      placeholderData: keepPreviousData
+    });
+
+    if(isError) {
+      enqueueSnackbat("Something went wrong!", { variant: "error" })
+    }
+
+    console.log(reqData);
 
   return (
     <section className="bg-[#1f1f1f]  h-[calc(100vh-5rem)] overflow-hidden">
@@ -17,12 +32,21 @@ const Tables = () => {
             Tables
           </h1>
         </div>
-            <div className="flex items-center justify-around gap-4">
-
-            <button onClick={() => setStatus("all")} className={`text-[#ababab] text-lg ${status === "all" && "bg-[#383838] rounded-lg px-5 py-2"}  rounded-lg px-5 py-2 font-semibold`}>
+        <div className="flex items-center justify-around gap-4">
+          <button 
+            onClick={() => setStatus("all")} 
+            className={`text-[#ababab] text-lg ${
+              status === "all" && "bg-[#383838] rounded-lg px-5 py-2"
+            }  rounded-lg px-5 py-2 font-semibold`}
+          >
                 All
             </button>
-            <button onClick={() => setStatus("booked")} className={`text-[#ababab] text-lg ${status === "booked" && "bg-[#383838] rounded-lg px-5 py-2"}  rounded-lg px-5 py-2 font-semibold`}>
+            <button 
+              onClick={() => setStatus("booked")} 
+              className={`text-[#ababab] text-lg ${
+                status === "booked" && "bg-[#383838] rounded-lg px-5 py-2"
+                }  rounded-lg px-5 py-2 font-semibold`}
+            >
                 Booked
             </button>
             </div>   
@@ -44,4 +68,4 @@ const Tables = () => {
   );
 };
 
-export default Tables
+export default Tables;
