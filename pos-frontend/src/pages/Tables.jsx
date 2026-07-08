@@ -9,19 +9,19 @@ import { getTables } from "../https";
 const Tables = () => {
     const [status, setStatus] = useState("all");
 
-    const { data:resData} = useQuery({
+    const { data: resData, isError} = useQuery({
       queryKey: ["tables"],
       queryFn: async () => {
         return await getTables();
       },
-      placeholderData: keepPreviousData
+      placeholderData: keepPreviousData,
     });
 
     if(isError) {
-      enqueueSnackbat("Something went wrong!", { variant: "error" })
+      enqueueSnackbar("Something went wrong!", { variant: "error" })
     }
 
-    console.log(reqData);
+    console.log(resData);
 
   return (
     <section className="bg-[#1f1f1f]  h-[calc(100vh-5rem)] overflow-hidden">
@@ -53,14 +53,17 @@ const Tables = () => {
         </div>
 
       <div className="grid grid-cols-5 gap-3 px-16 py-4 h-[650px] overflow-y-scroll scrollbar-hide">
-            {
-                tables.map((table) => {
-                    return (
-                        <TableCard key={table.id} id={table.id} name={table.name} status={table.status} initials={table.initial} seats={table.seats} />
-                    )
-                })
-            }
-            
+            {resData?.data.data.map((table) => {
+              return (
+                <TableCard 
+                  id={table._id} 
+                  name={table.tableNo} 
+                  status={table.status} 
+                  initials={"AM"} 
+                  seats={table.seats} 
+                />
+              );
+            })}
         </div>
             
         <BottomNav />
