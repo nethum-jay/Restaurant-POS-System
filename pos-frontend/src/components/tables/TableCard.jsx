@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { getBgColor } from "../../utils";
+import { getAvatarName, getBgColor } from "../../utils";
 import { useDispatch } from "react-redux";
 import { updateTable } from "../../redux/slices/customerSlice";
 
@@ -24,9 +24,9 @@ const TableCard = ({id, name, status, initials, seats }) => {
             </p>
         </div>
         <div className="flex items-center justify-center mt-5 mb-8">
-            <h1 className={`text-white rounded-full p-5 text-xl`} style={{backgroundColor : getBgColor()}} >{initials}</h1>
+            <h1 className={`text-white rounded-full p-5 text-xl`} style={{backgroundColor : initials ? getBgColor() : "#1f1f1f"}} >{getAvatarName(initials) || "N/A"}</h1>
         </div>
-        <p className="text-[#ababab] text-xs">Seats: <span className="text-[#f5f5f5]">{seats}</span> </p>
+        <p className="text-[#ababab] text-xs">Seats: <span className="text-[#f5f5f5]">{seats}</span></p>
     </div>
   );
 };
