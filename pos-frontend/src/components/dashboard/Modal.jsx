@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
-import { addTable } from "../../https";
 import { useMutation } from "@tanstack/react-query";
+import { addTable } from "../../https";
 import { enqueueSnackbar } from "notistack";
 
 const Modal = ({ setIsTableModalOpen }) => {
