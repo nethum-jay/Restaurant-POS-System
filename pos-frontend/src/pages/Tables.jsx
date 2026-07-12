@@ -53,19 +53,18 @@ const Tables = () => {
         </div>
 
       <div className="grid grid-cols-5 gap-3 px-16 py-4 h-[650px] overflow-y-scroll scrollbar-hide">
-            {resData?.data.data.map((table) => {
-              return (
-                <TableCard 
-                  id={table._id} 
-                  name={table.tableNo} 
-                  status={table.status} 
-                  initials={"AM"} 
-                  seats={table.seats} 
-                />
-              );
-            })}
-        </div>
-            
+        {resData?.data.data.map((table) => {
+          return (
+            <TableCard 
+              id={table._id} 
+              name={table.tableNo} 
+              status={table.status} 
+              initials={table?.currentOrder?.customerDetails.name} 
+              seats={table.seats} 
+            />
+          );
+        })}
+      </div>
         <BottomNav />
     </section>
   );
