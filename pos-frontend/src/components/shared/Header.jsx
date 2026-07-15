@@ -37,7 +37,7 @@ const Header = () => {
             {/* LOGO */}
             <div onClick={() => navigate("/")} className="flex items-center gap-2 cursor-pointer">
                 <img src={logo} className="h-8 w-8" alt="restro Logo" />
-                <h1 className="text-lg font-semibold text-[#f5f5f5]">
+                <h1 className="text-lg font-semibold text-[#f5f5f5] tracking-wider">
                     Restro
                 </h1>
             </div>
