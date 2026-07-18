@@ -16,5 +16,10 @@ export const register = (data) => api.post("/api/user/register", data);
 export const getUserData = () => api.get("/api/user");
 export const logout = () => api.post("/api/user/logout");
 
+// Table Endpoints
 export const addTable = (data) => api.post("/api/table/", data);
 export const getTables = () => api.get("/api/table");
+
+
+// Payment Endpoints
+export const createStripePayment = (data) => api.post("/api/payment/create-order", data);
