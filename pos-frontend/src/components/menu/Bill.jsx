@@ -1,9 +1,23 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { getTotalPrice } from '../../redux/slices/cartSlice';
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import { getTotalPrice } from "../../redux/slices/cartSlice";
+import { createStripePayment } from "../../https/index";
+
+function loadScript(src) {
+    return new Promise((resolve) => {
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = () => {
+            resolve(true);
+        };
+        script.onerror = () => {
+            resolve(false);
+        };
+        document.body.appendChild(script);
+    });
+}
 
 const Bill = () => {
-
     const carData = useSelector(state => state.cart);
     const total = useSelector(getTotalPrice);
     const taxRate = 5.25;
@@ -12,9 +26,56 @@ const Bill = () => {
 
     const [paymentMethod, setPaymentMethod] = useState();
 
+    const handlePlaceOrder = async () => {
+        if(!paymentMethod) {
+            enqueueSnackbar("Please select a payment method!", { 
+                variant: "warning"
+            });
+
+            return;
+        }
+
+        // load the script 
+        try {
+            const res = await loadScript(
+                "https://checkout.razorpay.com/v1/checkout.js"
+            );
+
+            if (!res) {
+                enqueueSnackbar("Razorpay SDK failed to load. Are you online?", {
+                    variant: "warning",
+                });
+                return;
+            }
+
+            // create order
+
+            const reqData = {
+                amount: totalPriceWithTax.toFixed(2)
+            }
+
+            const { data } = await createStripePayment(reqData);
+
+            const options = {
+                key: `${import.meta.env.VITE_RAZORPAY_KEY_ID}`,
+                amount: data.order.amount,
+                currency: data.order.currency,
+                name: "RESTRO",
+                description: "Secure Payment for Your Meal",
+                order_id: data.order.id,
+                handler: async function (response) {
+                    const verification = await verifyPaymentRazorpay(response);
+                    console.log(verification);
+                    enqueueSnackbar(verification.data.mess)
+                    
+                }
+            }
 
 
-    
+
+        } catch (error) {}
+    };
+
   return (
     <>
         <div className="flex items-center justify-between px-5 mt-2">
@@ -36,7 +97,7 @@ const Bill = () => {
 
         <div className="flex items-center gap-3 px-5 mt-4">
             <button className="bg-[#025cca] px-4 py-3 w-full rounded-lg text-[#f5f5f5] font-semibold text-lg">Print Receipt</button>
-            <button className="bg-[#f6b100] px-4 py-3 w-full rounded-lg text-[#1f1f1f] font-semibold text-lg">Place Order</button>
+            <button onClick={handlePlaceOrder} className="bg-[#f6b100] px-4 py-3 w-full rounded-lg text-[#1f1f1f] font-semibold text-lg">Place Order</button>
         </div>
     </>
 
