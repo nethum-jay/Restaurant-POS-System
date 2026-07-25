@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { connect, useSelector } from "react-redux";
 import { getTotalPrice } from "../../redux/slices/cartSlice";
-import { createStripePayment } from "../../https/index";\
+import { createStripePayment } from "../../https/index";
 import { useSnackbar } from "notistack";
 
 function loadScript(src) {
