@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { getTotalPrice } from "../../redux/slices/cartSlice";
-import { createStripePayment } from "../../https/index";
+import { createStripePayment } from "../../https/index";\
+import { useSnackbar } from "notistack";
 
 function loadScript(src) {
     return new Promise((resolve) => {
@@ -18,6 +19,7 @@ function loadScript(src) {
 }
 
 const Bill = () => {
+    const customerData = useSelector((state) => state.customer);
     const carData = useSelector(state => state.cart);
     const total = useSelector(getTotalPrice);
     const taxRate = 5.25;
@@ -64,16 +66,24 @@ const Bill = () => {
                 description: "Secure Payment for Your Meal",
                 order_id: data.order.id,
                 handler: async function (response) {
-                    const verification = await verifyPaymentRazorpay(response);
-                    console.log(verification);
-                    enqueueSnackbar(verification.data.mess)
-                    
-                }
-            }
+                    console.log(response);
+                },
+                prefill: {
+                    name: customerData.name,
+                    email:"",
+                    connect: customerData.phone,
+                },
+                theme: { color: "#022cca" },
+            };
 
-
-
-        } catch (error) {}
+            const rzp = new window.Rozorpay(options);
+            rzp.open();
+        } catch (error) {
+            console.log(error);
+            enqueueSnackbar("Payment Failed", { 
+                variant: "error",
+            });
+        }
     };
 
   return (
