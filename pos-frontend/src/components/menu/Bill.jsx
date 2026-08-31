@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { connect, useSelector } from "react-redux";
 import { getTotalPrice } from "../../redux/slices/cartSlice";
-import { createStripePayment } from "../../https/index";
+import { createStripePayment, verifyPaymentRazorpay } from "../../https/index";
 import { enqueueSnackbar } from "notistack";
 
 function loadScript(src) {
@@ -66,12 +66,14 @@ const Bill = () => {
                 description: "Secure Payment for Your Meal",
                 order_id: data.order.id,
                 handler: async function (response) {
-                    console.log(response);
+                    const verification = await verifyPaymentRazorpay(response);
+                    console.log(verification);
+                    enqueueSnackbar(verification.data.message, { variant: "success" });
                 },
                 prefill: {
                     name: customerData.name,
                     email:"",
-                    connect: customerData.phone,
+                    contact: customerData.phone,
                 },
                 theme: { color: "#022cca" },
             };
