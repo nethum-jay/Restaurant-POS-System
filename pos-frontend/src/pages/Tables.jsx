@@ -1,10 +1,11 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import BottomNav from "../components/shared/BottomNav"
 import BackButton from "../components/shared/BackButton"
 import TableCard from "../components/tables/TableCard"
 import { tables } from "../constants";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getTables } from "../https";
+import { enqueueSnackbar } from "notistack";
 
 const Tables = () => {
     const [status, setStatus] = useState("all");
@@ -17,11 +18,20 @@ const Tables = () => {
       placeholderData: keepPreviousData,
     });
 
-    if(isError) {
-      enqueueSnackbar("Something went wrong!", { variant: "error" })
+    useEffect(() => {
+    if (isError) {
+      enqueueSnackbar("Something went wrong while fetching tables!", { 
+        variant: "error" 
+      });
     }
+  }, [isError]);
 
-    console.log(resData);
+  const tablesList = resData?.data?.data || [];
+  const filteredTables = tablesList.filter((table) => {
+    if (status === "all") return true;
+    if (status === "booked") return table.status === "Booked" || table.status === "booked";
+    return true;
+  });
 
   return (
     <section className="bg-[#1f1f1f]  h-[calc(100vh-5rem)] overflow-hidden">
@@ -53,13 +63,14 @@ const Tables = () => {
         </div>
 
       <div className="grid grid-cols-5 gap-3 px-16 py-4 h-[650px] overflow-y-scroll scrollbar-hide">
-        {resData?.data.data.map((table) => {
+        {filteredTables.map((table) => {
           return (
             <TableCard 
-              id={table._id} 
+              key={table._id || table.id}
+              id={table._id}
               name={table.tableNo} 
               status={table.status} 
-              initials={table?.currentOrder?.customerDetails.name} 
+              initials={table?.currentOrder?.customerDetails?.name}
               seats={table.seats} 
             />
           );

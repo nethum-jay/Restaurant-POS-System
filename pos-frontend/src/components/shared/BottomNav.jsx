@@ -14,8 +14,8 @@ const BottomNav = () => {
   const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [guestCount, setGuestCount] = useState(0);
-  const [name, setName] = useState();
-  const [phone, setPhone] = useState();
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -34,6 +34,7 @@ const BottomNav = () => {
   const handleCreateOrder = () => {
     // send the data to store
     dispatch(setCustomer({name, phone, guests: guestCount}))
+    closeModal();
     navigate("/tables");
   }
 
@@ -87,7 +88,7 @@ const BottomNav = () => {
           <div>
             <label className="block text-[#ababab] mb-2 mt-3 text-sm font-medium">Customer Phone</label>
             <div className="flex items-center rounded-lg p-3 px-4 bg-[#1f1f1f]">
-              <input value={phone} onChange={(e) => setPhone(e.target.value)}  type="number" name="" 
+              <input value={phone} onChange={(e) => setPhone(e.target.value)}  type="tel" name="" 
               placeholder="+94-12346789" id="" className="bg-transparent flex-1 text-white 
               focus:outline-none" />  
             </div>
@@ -95,7 +96,7 @@ const BottomNav = () => {
           <div>
             <label className="block mb-2 mt-3 text-sm font-medium text-[#ababab]">Guest</label>
             <div className="flex items-center justify-between bg-[#1f1f1f] px-4 py-3 rounded-lg">
-              <button onClick={decrement} className="text-yellow-500 text-2x1">&minus;</button>
+              <button onClick={decrement} className="text-yellow-500 text-2xl">&minus;</button>
               <span className="text-white">{guestCount} Person</span>
               <button onClick={increment} className="text-yellow-500 text-2xl">&#43;</button>
             </div>

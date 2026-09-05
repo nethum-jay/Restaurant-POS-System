@@ -28,7 +28,7 @@ const handleAddToCart = (item) => {
   if(itemCount === 0) return;
 
   const {name, price} = item;
-  const newObj = { id: new Date(), name, pricePerQuantity: price, quantity: itemCount, price: price * itemCount };
+  const newObj = { id: Date.now(), name, pricePerQuantity: price, quantity: itemCount, price: price * itemCount };
 
   dispatch(addItems(newObj));
   setItemCount(0);
@@ -88,7 +88,7 @@ const handleAddToCart = (item) => {
               <div className="flex items-center justify-between bg-[#1f1f1f] px-4 py-3 rounded-lg gap-6 z-20 w-[50%]">
                 <button 
                   onClick={() => decrement(item.id)} 
-                  className="text-yellow-500 text-2x1"
+                  className="text-yellow-500 text-2xl"
                 >
                   &minus;
                 </button>
