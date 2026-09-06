@@ -81,7 +81,6 @@ const webHookVerification = async (req, res, next) => {
                 })
 
                 await newPayment.save();
-                res.json({success:true});
             }
 
             res.json({ success: true });
