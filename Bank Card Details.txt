@@ -1,9 +1,0 @@
-භාවිතා කළ යුතු Test Card විස්තර:
-
-Card number: 4242 4242 4242 4242
-
-Expiry (MM/YY): ඉදිරි ඕනෑම දිනයක් (උදා: 12 / 28)
-
-Security code (CVC): ඕනෑම අංක 3ක් (උදා: 123 හෝ 422)
-
-Country: ඕනෑම රටක් (Sri Lanka තැබිය හැක)
