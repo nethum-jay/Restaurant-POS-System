@@ -71,7 +71,7 @@ const StripeModal = ({ clientSecret, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#1a1a1a] border border-[#2e2e2e] p-6 rounded-2xl w-full max-w-md">
+      <div className="bg-[#1a1a1a] border border-[#2e2e2e] p-6 rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto scrollbar-hide">
         <h2 className="text-xl font-bold text-white mb-4">Complete Payment</h2>
         <Elements options={{ clientSecret, appearance }} stripe={stripePromise}>
           <CheckoutForm onClose={onClose} />
