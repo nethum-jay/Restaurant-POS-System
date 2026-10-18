@@ -1,13 +1,26 @@
+// require("dotenv").config();
+
+// const config  = Object.freeze({
+//     port: process.env.PORT || 3000,
+//     databaseURI: process.env.MONGODB_URI || "mongodb://localhost:27017/pos-db",
+//     nodeEnv: process.env.NODE_ENV || "development",
+//     accessTokenSecret: process.env.JWT_SECRET,
+//     razorpayKeyId: process.env.RAZORPAY_KEY_ID,
+//     razorpaySecretKey: process.env.RAZORPAY_SECRET_KEY,
+//     razorpyWebhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET,
+// });
+
+// module.exports = config;
+
 require("dotenv").config();
 
-const config  = Object.freeze({
+const config = Object.freeze({
     port: process.env.PORT || 3000,
     databaseURI: process.env.MONGODB_URI || "mongodb://localhost:27017/pos-db",
     nodeEnv: process.env.NODE_ENV || "development",
     accessTokenSecret: process.env.JWT_SECRET,
-    razorpayKeyId: process.env.RAZORPAY_KEY_ID,
-    razorpaySecretKey: process.env.RAZORPAY_SECRET_KEY,
-    razorpyWebhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET,
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
 });
 
 module.exports = config;

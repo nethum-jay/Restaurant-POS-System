@@ -166,7 +166,7 @@ const Bill = () => {
             try {
                 const reqData = {
                     amount: Math.round(totalPriceWithTax * 100), 
-                    currency: "usd",
+                    currency: "lkr",
                     customer: customerData
                 };
 

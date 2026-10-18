@@ -98,29 +98,29 @@
 
 
 const Stripe = require("stripe");
-const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
+const stripe = Stripe(process.env.STRIPE_SECRET_KEY); 
+const config = require("../config/config");
+const createHttpError = require("http-errors");
 const Payment = require("../models/paymentModel");
 
 const createOrder = async (req, res, next) => {
     try {
         const { amount, currency } = req.body;
-
         const options = {
-            amount: Number(amount), 
-            currency: currency || "usd", 
+            amount: Number(amount) * 100,
+            currency: currency || "lkr", 
             metadata: {
-                receipt: `receipt_${Date.now()}`
+                receipt: `receipt_${Date.now()}` 
             }
         };
 
         const paymentIntent = await stripe.paymentIntents.create(options);
-
         res.status(200).json({
-            success: true,
-            clientSecret: paymentIntent.client_secret
+            success: true, 
+            clientSecret: paymentIntent.client_secret 
         });
     } catch (error) {
-        next(error);
+        next(error); 
     }
 };
 
@@ -145,11 +145,15 @@ const webHookVerification = async (req, res, next) => {
             event = req.body;
         }
 
-        console.log("✅ Webhook verified:", event.type || "Event received");
+        console.log("✅ Webhook verified:", {
+            id: event.id,
+            type: event.type,
+            status: event.data.object.status
+});
 
         if (event.type === "payment_intent.succeeded") {
             const paymentIntent = event.data.object;
-            console.log(`💰 Payment Captured: ${paymentIntent.amount / 100} ${(paymentIntent.currency || "USD").toUpperCase()}`);
+            console.log(`💰 Payment Captured: ${paymentIntent.amount / 100} ${(paymentIntent.currency || "LKR").toUpperCase()}`);
 
             const newPayment = new Payment({
                 paymentId: paymentIntent.id,
