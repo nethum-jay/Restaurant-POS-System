@@ -105,12 +105,17 @@ const Payment = require("../models/paymentModel");
 
 const createOrder = async (req, res, next) => {
     try {
-        const { amount, currency } = req.body;
+        // Frontend
+        const { amount, email, contact } = req.body;
+        
         const options = {
-            amount: Number(amount) * 100,
-            currency: currency || "lkr", 
+            amount: Math.round(Number(amount) * 100),
+            currency: "lkr",
+            receipt_email: email || "customer@pos.com",
             metadata: {
-                receipt: `receipt_${Date.now()}` 
+                receipt: `receipt_${Date.now()}`,
+                email: email || "customer@pos.com",
+                contact: contact || "+94771234567"
             }
         };
 
@@ -146,28 +151,36 @@ const webHookVerification = async (req, res, next) => {
         }
 
         console.log("✅ Webhook verified:", {
-            id: event.id,
-            type: event.type,
-            status: event.data.object.status
-});
+            entity: event.object,
+            account_id: event.id,
+            event: event.type,
+            contains: ["payment"],
+            payload: { payment: { entity: event.data.object } },
+            created_at: event.created
+        });
 
+        // ✅ Process payment
         if (event.type === "payment_intent.succeeded") {
             const paymentIntent = event.data.object;
             console.log(`💰 Payment Captured: ${paymentIntent.amount / 100} ${(paymentIntent.currency || "LKR").toUpperCase()}`);
 
+            // Add Payment Details in Database
             const newPayment = new Payment({
                 paymentId: paymentIntent.id,
+                orderId: paymentIntent.metadata?.receipt || paymentIntent.id,
                 amount: paymentIntent.amount / 100,
                 currency: paymentIntent.currency,
                 status: paymentIntent.status,
                 method: paymentIntent.payment_method_types ? paymentIntent.payment_method_types[0] : "card",
+                email: paymentIntent.receipt_email || paymentIntent.metadata?.email || "",
+                contact: paymentIntent.metadata?.contact || "",
                 createdAt: new Date(paymentIntent.created * 1000)
             });
 
             await newPayment.save();
         }
 
-        return res.status(200).json({ received: true });
+        return res.json({ success: true });
     } catch (error) {
         console.log("Webhook Error:", error.message);
         return res.status(400).send(`Webhook Error: ${error.message}`);

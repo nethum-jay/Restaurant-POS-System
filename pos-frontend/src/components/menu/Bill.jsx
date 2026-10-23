@@ -164,9 +164,12 @@ const Bill = () => {
 
         if (paymentMethod === "Online") {
             try {
+                // 👇 මෙතැනට email සහ contact ඇතුළත් කර ඇත
                 const reqData = {
-                    amount: Math.round(totalPriceWithTax * 100), 
+                    amount: totalPriceWithTax.toFixed(2), 
                     currency: "lkr",
+                    email: customerData?.customerEmail || "customer@pos.com",
+                    contact: customerData?.customerPhone || "+94771234567",
                     customer: customerData
                 };
 
@@ -240,7 +243,3 @@ const Bill = () => {
 };
 
 export default Bill;
-
-
-
-
