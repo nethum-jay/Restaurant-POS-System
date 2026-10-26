@@ -9,7 +9,6 @@ import { enqueueSnackbar } from "notistack";
 
 const Tables = () => {
     const [status, setStatus] = useState("all");
-
     const { data: resData, isError} = useQuery({
       queryKey: ["tables"],
       queryFn: async () => {
@@ -18,20 +17,11 @@ const Tables = () => {
       placeholderData: keepPreviousData,
     });
 
-    useEffect(() => {
     if (isError) {
-      enqueueSnackbar("Something went wrong while fetching tables!", { 
-        variant: "error" 
-      });
+      enqueueSnackbar("Something went wrong!", { variant: "error"})
     }
-  }, [isError]);
 
-  const tablesList = resData?.data?.data || [];
-  const filteredTables = tablesList.filter((table) => {
-    if (status === "all") return true;
-    if (status === "booked") return table.status === "Booked" || table.status === "booked";
-    return true;
-  });
+    console.log(resData);
 
   return (
     <section className="bg-[#1f1f1f]  h-[calc(100vh-5rem)] overflow-hidden">
@@ -63,10 +53,9 @@ const Tables = () => {
         </div>
 
       <div className="grid grid-cols-5 gap-3 px-16 py-4 h-[650px] overflow-y-scroll scrollbar-hide">
-        {filteredTables.map((table) => {
+        {resData?.data.data.map((table) => {
           return (
             <TableCard 
-              key={table._id || table.id}
               id={table._id}
               name={table.tableNo} 
               status={table.status} 

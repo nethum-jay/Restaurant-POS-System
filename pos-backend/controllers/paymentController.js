@@ -105,11 +105,14 @@ const Payment = require("../models/paymentModel");
 
 const createOrder = async (req, res, next) => {
     try {
-        // Frontend
         const { amount, email, contact } = req.body;
+
+        const stripeAmount = String(amount).includes(".")
+            ? Math.round(Number(amount) * 100)
+            : Math.round(Number(amount));
         
         const options = {
-            amount: Math.round(Number(amount) * 100),
+            amount: stripeAmount,
             currency: "lkr",
             receipt_email: email || "customer@pos.com",
             metadata: {
@@ -159,7 +162,7 @@ const webHookVerification = async (req, res, next) => {
             created_at: event.created
         });
 
-        // ✅ Process payment
+        // ✅ Process payment (e.g., update DB, send confirmation email)
         if (event.type === "payment_intent.succeeded") {
             const paymentIntent = event.data.object;
             console.log(`💰 Payment Captured: ${paymentIntent.amount / 100} ${(paymentIntent.currency || "LKR").toUpperCase()}`);

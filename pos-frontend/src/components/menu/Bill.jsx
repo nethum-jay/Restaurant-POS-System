@@ -126,6 +126,7 @@ import { getTotalPrice } from "../../redux/slices/cartSlice";
 import { createStripePayment } from "../../https/index";
 import { enqueueSnackbar } from "notistack";
 import StripeModal from "../shared/StripeModal";
+import { useMutation } from "@tanstack/react-query"
 
 const Bill = () => {
     const customerData = useSelector((state) => state.customer);
@@ -162,11 +163,27 @@ const Bill = () => {
             return;
         }
 
+        // Please the oder
+        const orderData ={
+            customerDetsils: {
+                name: customerData.customerName,
+                phone: customerData.customerPhone,
+                guests: customerData.guests
+            },
+            orderStatus: "In Progress", 
+            bills: {
+                total: total,
+                tax: tax,
+                totalWithTax: totalPriceWithTax
+            },
+            items: cartData,
+            table: customerData.table.tableId
+        };
+
         if (paymentMethod === "Online") {
             try {
-                // 👇 මෙතැනට email සහ contact ඇතුළත් කර ඇත
                 const reqData = {
-                    amount: totalPriceWithTax.toFixed(2), 
+                    amount: totalPriceWithTax.toFixed(2),
                     currency: "lkr",
                     email: customerData?.customerEmail || "customer@pos.com",
                     contact: customerData?.customerPhone || "+94771234567",
@@ -192,6 +209,21 @@ const Bill = () => {
             }
         }
     };
+
+    const orderMutation = useMutation({
+        mutationFn: (reqData) => addOreder(reqData),
+        onSuccess: (reqData) => {
+            const { data } = reqData.data;
+            console.log(data);
+
+            enqueueSnackbar("Order Placed!", { 
+                    variant: "success" 
+            });
+        },
+        onError: (error) => {
+            console.log(error);
+        }
+    })
 
     return (
         <>
