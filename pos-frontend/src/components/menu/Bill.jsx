@@ -121,14 +121,17 @@
 
 
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { getTotalPrice } from "../../redux/slices/cartSlice";
-import { createStripePayment } from "../../https/index";
+import { useSelector, useDispatch } from "react-redux";
+import { getTotalPrice, removeAllItems } from "../../redux/slices/cartSlice";
+import { removeCustomer } from "../../redux/slices/customerSlice";
+import { createStripePayment, addOrder, updateTable } from "../../https/index";
 import { enqueueSnackbar } from "notistack";
+import { useMutation } from "@tanstack/react-query";
 import StripeModal from "../shared/StripeModal";
-import { useMutation } from "@tanstack/react-query"
 
 const Bill = () => {
+    const dispatch = useDispatch();
+
     const customerData = useSelector((state) => state.customer);
     const cartData = useSelector((state) => state.cart);
     const total = useSelector(getTotalPrice);
@@ -140,10 +143,79 @@ const Bill = () => {
     const [clientSecret, setClientSecret] = useState("");
     const [openStripeModal, setOpenStripeModal] = useState(false);
 
+    // 1. The mutation for saving the order to the database
+    const orderMutation = useMutation({
+        mutationFn: (reqData) => addOrder(reqData),
+        onSuccess: (resData) => {
+            const { data } = resData.data;
+            console.log("Order Created:", data);
+
+            // 2. Updating the table status to "Booked" after the order is created
+            const tableData = {
+                status: "Booked",
+                orderId: data._id,
+                tableId: data.table
+            };
+
+            setTimeout(() => {
+                tableUpdateMutation.mutate(tableData);
+            }, 1500);
+
+            enqueueSnackbar("Order Placed!", {
+                variant: "success"
+            });
+        },
+        onError: (error) => {
+            console.log("Order Error:", error);
+            enqueueSnackbar("Failed to place order!", { variant: "error" });
+        }
+    });
+
+    // 3. Resetting the customer and the cart after updating the table
+    const tableUpdateMutation = useMutation({
+        mutationFn: (reqData) => updateTable(reqData),
+        onSuccess: (resData) => {
+            console.log("Table Updated:", resData);
+            dispatch(removeCustomer());
+            dispatch(removeAllItems());
+        },
+        onError: (error) => {
+            console.log("Table Update Error:", error);
+        }
+    });
+
+    // Function that saves the order after a successful Stripe payment
+    const handleOnlinePaymentSuccess = (paymentIntent) => {
+        const orderData = {
+            customerDetails: {
+                name: customerData.customerName,
+                phone: customerData.customerPhone,
+                guests: customerData.guests
+            },
+            orderStatus: "In Progress",
+            bills: {
+                total: total,
+                tax: tax,
+                totalWithTax: totalPriceWithTax
+            },
+            items: cartData,
+            table: customerData.table?.tableId,
+            paymentMethod: paymentMethod,
+            paymentData: {
+                stripe_payment_id: paymentIntent.id,
+                stripe_payment_status: paymentIntent.status
+            }
+        };
+
+        setTimeout(() => {
+            orderMutation.mutate(orderData);
+        }, 1500);
+    };
+
     const handlePlaceOrder = async () => {
         if (!paymentMethod) {
-            enqueueSnackbar("Please select a payment method!", { 
-                variant: "warning" 
+            enqueueSnackbar("Please select a payment method!", {
+                variant: "warning"
             });
             return;
         }
@@ -153,33 +225,32 @@ const Bill = () => {
             return;
         }
 
+        // Saving the order directly when making a cash payment
         if (paymentMethod === "Cash") {
-            try {
-                enqueueSnackbar("Order placed successfully with Cash!", { variant: "success" });
-            } catch (error) {
-                console.log(error);
-                enqueueSnackbar("Failed to place cash order", { variant: "error" });
-            }
+            const orderData = {
+                customerDetails: {
+                    name: customerData.customerName,
+                    phone: customerData.customerPhone,
+                    guests: customerData.guests
+                },
+                orderStatus: "In Progress",
+                bills: {
+                    total: total,
+                    tax: tax,
+                    totalWithTax: totalPriceWithTax
+                },
+                items: cartData,
+                table: customerData.table?.tableId,
+                paymentMethod: paymentMethod
+            };
+
+            setTimeout(() => {
+                orderMutation.mutate(orderData);
+            }, 1500);
             return;
         }
 
-        // Please the oder
-        const orderData ={
-            customerDetsils: {
-                name: customerData.customerName,
-                phone: customerData.customerPhone,
-                guests: customerData.guests
-            },
-            orderStatus: "In Progress", 
-            bills: {
-                total: total,
-                tax: tax,
-                totalWithTax: totalPriceWithTax
-            },
-            items: cartData,
-            table: customerData.table.tableId
-        };
-
+        // Opening the Stripe modal when making payments via the online (Stripe) method
         if (paymentMethod === "Online") {
             try {
                 const reqData = {
@@ -191,7 +262,6 @@ const Bill = () => {
                 };
 
                 const { data } = await createStripePayment(reqData);
-
                 const secret = data?.clientSecret || data?.client_secret;
 
                 if (secret) {
@@ -200,30 +270,14 @@ const Bill = () => {
                 } else {
                     enqueueSnackbar("Failed to initialize Stripe payment", { variant: "error" });
                 }
-
             } catch (error) {
                 console.log("Stripe Payment Error:", error);
-                enqueueSnackbar("Payment Failed to initiate", { 
-                    variant: "error" 
+                enqueueSnackbar("Payment Failed to initiate", {
+                    variant: "error"
                 });
             }
         }
     };
-
-    const orderMutation = useMutation({
-        mutationFn: (reqData) => addOreder(reqData),
-        onSuccess: (reqData) => {
-            const { data } = reqData.data;
-            console.log(data);
-
-            enqueueSnackbar("Order Placed!", { 
-                    variant: "success" 
-            });
-        },
-        onError: (error) => {
-            console.log(error);
-        }
-    })
 
     return (
         <>
@@ -241,14 +295,14 @@ const Bill = () => {
             </div>
 
             <div className="flex items-center gap-3 px-5 mt-4">
-                <button 
-                    onClick={() => setPaymentMethod("Cash")} 
+                <button
+                    onClick={() => setPaymentMethod("Cash")}
                     className={`px-4 py-3 w-full rounded-lg text-[#ababab] font-semibold ${paymentMethod === "Cash" ? "bg-[#383737] text-white" : "bg-[#1f1f1f]"}`}
                 >
                     Cash
                 </button>
-                <button 
-                    onClick={() => setPaymentMethod("Online")} 
+                <button
+                    onClick={() => setPaymentMethod("Online")}
                     className={`px-4 py-3 w-full rounded-lg text-[#ababab] font-semibold ${paymentMethod === "Online" ? "bg-[#383737] text-white" : "bg-[#1f1f1f]"}`}
                 >
                     Online
@@ -259,8 +313,8 @@ const Bill = () => {
                 <button className="bg-[#025cca] px-4 py-3 w-full rounded-lg text-[#f5f5f5] font-semibold text-lg">
                     Print Receipt
                 </button>
-                <button 
-                    onClick={handlePlaceOrder} 
+                <button
+                    onClick={handlePlaceOrder}
                     className="bg-[#f6b100] px-4 py-3 w-full rounded-lg text-[#1f1f1f] font-semibold text-lg"
                 >
                     Place Order
@@ -268,7 +322,11 @@ const Bill = () => {
             </div>
 
             {openStripeModal && clientSecret && (
-                <StripeModal clientSecret={clientSecret} onClose={() => setOpenStripeModal(false)} />
+                <StripeModal
+                    clientSecret={clientSecret}
+                    onClose={() => setOpenStripeModal(false)}
+                    onPaymentSuccess={handleOnlinePaymentSuccess}
+                />
             )}
         </>
     );
