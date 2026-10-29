@@ -1,19 +1,18 @@
-import React from 'react'
-import BottomNav from '../components/shared/BottomNav';
-import BackButton from '../components/shared/BackButton';
-import { MdRestaurantMenu } from "react-icons/md"; 
-import MenuContainer from '../components/menu/MenuContainer';
-import CustomerInfo from '../components/menu/CustomerInfo';
-import CartInfo from '../components/menu/CartInfo';
-import Bill from '../components/menu/Bill';
-import { useSelector } from 'react-redux';
+import React from "react";
+import BottomNav from "../components/shared/BottomNav";
+import BackButton from "../components/shared/BackButton";
+import { MdRestaurantMenu } from "react-icons/md";
+import MenuContainer from "../components/menu/MenuContainer";
+import CustomerInfo from "../components/menu/CustomerInfo";
+import CartInfo from "../components/menu/CartInfo";
+import Bill from "../components/menu/Bill";
+import { useSelector } from "react-redux";
 
 const Menu = () => {
-
-  const customerData = useSelector(state => state.customer);
+  const customerData = useSelector((state) => state.customer);
 
   return (
-    <section className='bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden flex gap-3'>
+    <section className="bg-[#1f1f1f] h-[calc(100vh-5rem)] overflow-hidden flex gap-3">
       {/* Left Div */}
       <div className="flex-[3]">
         <div className="flex items-center justify-between px-10 py-4">
@@ -48,13 +47,13 @@ const Menu = () => {
         {/* Cart Items */}
         <CartInfo />
         <hr className="border-[#2a2a2a] border-t-2" />
-        {/* Bills */ }
+        {/* Bills */}
         <Bill />
       </div>
 
-        <BottomNav />
+      <BottomNav />
     </section>
-  )
-}
+  );
+};
 
-export default Menu
+export default Menu;

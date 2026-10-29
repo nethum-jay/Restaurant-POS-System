@@ -3,7 +3,7 @@
 // import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
 // import { enqueueSnackbar } from "notistack";
 // import { useDispatch } from "react-redux";
-// import { removeAllItems } from "../../redux/slices/cartSlice"; 
+// import { removeAllItems } from "../../redux/slices/cartSlice";
 
 // const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
@@ -83,89 +83,103 @@
 
 // export default StripeModal;
 
-
 import React, { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import {
+  Elements,
+  PaymentElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
 import { enqueueSnackbar } from "notistack";
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const CheckoutForm = ({ onClose, onPaymentSuccess }) => {
-    const stripe = useStripe();
-    const elements = useElements();
-    const [loading, setLoading] = useState(false);
+  const stripe = useStripe();
+  const elements = useElements();
+  const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        if (!stripe || !elements) return;
+    if (!stripe || !elements) return;
 
-        setLoading(true);
+    setLoading(true);
 
-        const { error, paymentIntent } = await stripe.confirmPayment({
-            elements,
-            redirect: "if_required",
-        });
+    try {
+      const { error, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        redirect: "if_required",
+      });
 
-        if (error) {
-            enqueueSnackbar(error.message, { variant: "error" });
-            setLoading(false);
-        } else if (paymentIntent && paymentIntent.status === "succeeded") {
-            enqueueSnackbar("Payment Successful!", { variant: "success" });
-            
-            // Executing the Order Mutation in Bill.jsx as soon as the payment is successful
-            if (onPaymentSuccess) {
-                onPaymentSuccess(paymentIntent);
-            }
-            onClose();
+      if (error) {
+        enqueueSnackbar(error.message, { variant: "error" });
+      } else if (paymentIntent && paymentIntent.status === "succeeded") {
+        enqueueSnackbar("Payment Successful!", { variant: "success" });
+
+        // ගෙවීම සාර්ථක වූ වහාම Bill.jsx හි Order Mutation එක ක්‍රියාත්මක කරවීම
+        if (onPaymentSuccess) {
+          onPaymentSuccess(paymentIntent);
         }
-        setLoading(false);
-    };
+        onClose();
+      }
+    } catch (err) {
+      console.log("Stripe Confirmation Error:", err);
+      enqueueSnackbar("Payment processing failed", { variant: "error" });
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            <PaymentElement className="text-white" />
-            <div className="flex gap-3 mt-6">
-                <button
-                    type="button"
-                    onClick={onClose}
-                    className="w-1/2 py-3 bg-[#2a2a2a] text-white rounded-lg font-semibold"
-                >
-                    Cancel
-                </button>
-                <button
-                    type="submit"
-                    disabled={!stripe || loading}
-                    className="w-1/2 py-3 bg-[#f6b100] text-black rounded-lg font-bold hover:bg-yellow-600 disabled:opacity-50"
-                >
-                    {loading ? "Processing..." : "Pay Now"}
-                </button>
-            </div>
-        </form>
-    );
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <PaymentElement
+        className="text-white"
+        options={{
+          layout: "tabs",
+        }}
+      />
+      <div className="flex gap-3 mt-6">
+        <button
+          type="button"
+          onClick={onClose}
+          className="w-1/2 py-3 bg-[#2a2a2a] text-white rounded-lg font-semibold"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={!stripe || loading}
+          className="w-1/2 py-3 bg-[#f6b100] text-black rounded-lg font-bold hover:bg-yellow-600 disabled:opacity-50"
+        >
+          {loading ? "Processing..." : "Pay Now"}
+        </button>
+      </div>
+    </form>
+  );
 };
 
 const StripeModal = ({ clientSecret, onClose, onPaymentSuccess }) => {
-    const appearance = {
-        theme: "night",
-        variables: {
-            colorPrimary: "#f6b100",
-            colorBackground: "#1f1f1f",
-            colorText: "#ffffff",
-        },
-    };
+  const appearance = {
+    theme: "night",
+    variables: {
+      colorPrimary: "#f6b100",
+      colorBackground: "#1f1f1f",
+      colorText: "#ffffff",
+    },
+  };
 
-    return (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-            <div className="bg-[#1a1a1a] border border-[#2e2e2e] p-6 rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto scrollbar-hide">
-                <h2 className="text-xl font-bold text-white mb-4">Complete Payment</h2>
-                <Elements options={{ clientSecret, appearance }} stripe={stripePromise}>
-                    <CheckoutForm onClose={onClose} onPaymentSuccess={onPaymentSuccess} />
-                </Elements>
-            </div>
-        </div>
-    );
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-[#1a1a1a] border border-[#2e2e2e] p-6 rounded-2xl w-full max-w-md max-h-[85vh] overflow-y-auto scrollbar-hide">
+        <h2 className="text-xl font-bold text-white mb-4">Complete Payment</h2>
+        <Elements options={{ clientSecret, appearance }} stripe={stripePromise}>
+          <CheckoutForm onClose={onClose} onPaymentSuccess={onPaymentSuccess} />
+        </Elements>
+      </div>
+    </div>
+  );
 };
 
 export default StripeModal;
